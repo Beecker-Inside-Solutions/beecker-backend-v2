@@ -8,6 +8,13 @@ const generateAdminToken = (userID) => {
   return token;
 };
 
+const generateToken = (userID) => {
+  const token = jwt.sign({ userID, admin: false }, process.env.JWT_SECRET, {
+    expiresIn: "24h",
+  });
+  return token;
+};
+
 const verifyJWT = (req, res, next) => {
   let token = req.headers["authorization"];
   if (token) {
@@ -38,4 +45,5 @@ module.exports = {
   generateAdminToken,
   verifyJWT,
   verifyAdminJWT,
+  generateToken,
 };
