@@ -1,5 +1,4 @@
 const userService = require("../service/user.service");
-const jwtMiddleware = require("../middleware/jwt-middleware"); // Import jwtMiddleware for token generation
 
 const userController = {
   login: async (req, res) => {

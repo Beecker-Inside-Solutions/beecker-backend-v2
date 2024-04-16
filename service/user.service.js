@@ -1,6 +1,5 @@
 const connection = require("../helpers/mysql-config");
 const jwtMiddleware = require("../middleware/jwt-middleware");
-const { use } = require("../routes/user");
 
 const userService = {
   validateUser: async (email, password) => {
@@ -88,7 +87,7 @@ const userService = {
   ) => {
     try {
       const [rows] = await connection.query(
-        "INSERT INTO Users (email,password,name,lastName,secondLastName,dateOfBirth,UserTypes_idUserTypes) VALUES (?,SHA2(?,224),?,?,?,?,?)"[ //WHERE idUsers = ?",
+        "INSERT INTO Users (email,password,name,lastName,secondLastName,dateOfBirth,Roles_idRole) VALUES (?,SHA2(?,224),?,?,?,?,?)"[ //WHERE idUsers = ?",
           (email,
           password,
           name,
@@ -109,7 +108,7 @@ const userService = {
   updateUserPermissions: async (idUsers, email, userTypeId) => {
     try {
       const [rows] = await connection.query(
-        "UPDATE Users SET email = ?, UserTypes_idUserTypes = ? WHERE idUsers = ?",
+        "UPDATE Users SET email = ?, Roles_idRole = ? WHERE idUsers = ?",
         [email, userTypeId, idUsers]
       );
 
