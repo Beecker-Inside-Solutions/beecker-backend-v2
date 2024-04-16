@@ -1,4 +1,3 @@
-const { get } = require("http");
 const connection = require("../helpers/mysql-config");
 const jwtMiddleware = require("../middleware/jwt-middleware");
 
