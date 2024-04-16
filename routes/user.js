@@ -13,7 +13,7 @@ router.get(
 );
 router.get("/users/:idUsers", middleware.verifyJWT, userController.getUser);
 router.delete(
-  "/users/:idUsers",
+  "/users/delete/:idUsers",
   middleware.verifyJWT,
   middleware.verifyAdminJWT,
   userController.deleteUser
@@ -27,7 +27,7 @@ router.get(
 );
 
 router.put(
-  "/users/:idUsers",
+  "/users/update/:idUsers",
   middleware.verifyJWT,
   middleware.verifyAdminJWT,
   userController.updateUser
