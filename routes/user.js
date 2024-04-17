@@ -4,14 +4,14 @@ const userController = require("../controller/userController");
 const middleware = require("../middleware/jwt-middleware");
 
 router.post("/login", userController.login);
-router.post("/register", userController.register);
+router.post("/register", userController.registerUser);
 router.get(
   "/users",
   middleware.verifyJWT,
   middleware.verifyAdminJWT,
   userController.getUsers
 );
-router.get("/users/:idUsers", middleware.verifyJWT, userController.getUser);
+router.get("/users/:idUsers", middleware.verifyJWT, userController.getUserById);
 router.delete(
   "/users/delete/:idUsers",
   middleware.verifyJWT,
@@ -27,10 +27,10 @@ router.get(
 );
 
 router.put(
-  "/users/update/:idUsers",
+  "/users/updatePermissions/:idUsers",
   middleware.verifyJWT,
   middleware.verifyAdminJWT,
-  userController.updateUser
+  userController.updateUserPermissions
 );
 
 module.exports = router;

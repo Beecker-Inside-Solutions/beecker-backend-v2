@@ -24,6 +24,17 @@ const userController = {
     }
   },
 
+  getUserById: async (req, res) => {
+    try {
+      const { idUsers } = req.params;
+      const user = await userService.getUserById(idUsers);
+
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
   deleteUser: async (req, res) => {
     try {
       const { idUsers } = req.params;
@@ -40,17 +51,6 @@ const userController = {
       const userTypes = await userService.getUserTypes();
 
       res.status(200).json(userTypes);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  },
-
-  getUserById: async (req, res) => {
-    try {
-      const { idUsers } = req.params;
-      const user = await userService.getUserById(idUsers);
-
-      res.status(200).json(user);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

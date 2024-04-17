@@ -76,28 +76,26 @@ const userService = {
   },
 
   registerUser: async (
-    //idUsers,
     email,
     password,
     name,
     lastName,
     secondLastName,
     dateOfBirth,
-    userTypeId = 0
+    userTypeId
   ) => {
     try {
-      const [rows] = await connection.query(
-        "INSERT INTO Users (email,password,name,lastName,secondLastName,dateOfBirth,Roles_idRole) VALUES (?,SHA2(?,224),?,?,?,?,?)"[ //WHERE idUsers = ?",
-          (email,
-          password,
-          name,
-          lastName,
-          secondLastName,
-          dateOfBirth,
-          userTypeId) //,
-          // idUsers,
-        ]
-      );
+      const sql =
+        "INSERT INTO Users (email,password,name,lastName,secondLastName,dateOfBirth,Roles_idRole) VALUES (?,SHA2(?,224),?,?,?,?,?)";
+      const [rows] = await connection.query(sql, [
+        email,
+        password,
+        name,
+        lastName,
+        secondLastName,
+        dateOfBirth,
+        userTypeId,
+      ]);
 
       return rows;
     } catch (error) {
