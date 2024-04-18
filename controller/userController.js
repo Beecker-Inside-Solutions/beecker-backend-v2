@@ -82,17 +82,17 @@ const userController = {
       res.status(500).json({ message: error.message });
     }
   },
-
   updateUserPermissions: async (req, res) => {
     try {
       const { idUsers } = req.params;
-      const { idUserTypes } = req.body;
+      const { email, userTypeId } = req.body; // Assuming email is included in the request body
       const response = await userService.updateUserPermissions(
         idUsers,
-        idUserTypes
+        email,
+        userTypeId
       );
 
-      res.status(200).json(response);
+      res.status(200).json(`User with id ${idUsers} updated successfully`);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
