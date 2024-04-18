@@ -44,7 +44,7 @@ const projectController = {
         projectDescription
       );
 
-      res.status(200).json(response);
+      res.status(200).json(`Project updated: ${idProject}`, response);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -54,7 +54,7 @@ const projectController = {
       const { idProject } = req.params;
       const response = await projectService.deleteProject(idProject);
 
-      res.status(200).json(response);
+      res.status(200).json(`Project deleted with ID: ${idProject}`, response);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

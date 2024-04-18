@@ -26,13 +26,13 @@ router.delete(
   projectController.deleteProject
 );
 router.get(
-  "/projects/user/:idUser",
+  "/projects/user/:idUsers",
   middleware.verifyJWT,
   projectController.getProjectByUserId
 );
 
 router.get(
-  "/projects/:idProject/user/:idUser",
+  "/projects/:idProject/user/:idUsers",
   middleware.verifyJWT,
   projectController.getProjectByUserIdAndProjectId
 );
