@@ -22,13 +22,14 @@ const projectController = {
   },
   addProject: async (req, res) => {
     try {
-      const { projectName, projectDescription } = req.body;
+      const { projectName, projectDescription, idUsers } = req.body;
       const response = await projectService.addProject(
         projectName,
-        projectDescription
+        projectDescription,
+        idUsers
       );
 
-      res.status(200).json(response);
+      res.status(200).json(`Project added with ID: ${response.insertId}`);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

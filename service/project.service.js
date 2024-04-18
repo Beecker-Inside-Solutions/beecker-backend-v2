@@ -3,7 +3,7 @@ const connection = require("../helpers/mysql-config");
 const projectService = {
   getProjects: async () => {
     try {
-      const [rows] = await connection.query("SELECT * FROM Projects");
+      const [rows] = await connection.query("SELECT * FROM Project");
 
       return rows;
     } catch (error) {
@@ -13,7 +13,7 @@ const projectService = {
   getProject: async (idProject) => {
     try {
       const [rows] = await connection.query(
-        "SELECT * FROM Projects WHERE idProject = ?",
+        "SELECT * FROM Project WHERE idProject = ?",
         [idProject]
       );
 
@@ -22,11 +22,11 @@ const projectService = {
       throw error;
     }
   },
-  addProject: async (projectName, projectDescription) => {
+  addProject: async (projectName, projectDescription, idUsers) => {
     try {
       const [rows] = await connection.query(
-        "INSERT INTO Projects (projectName, projectDescription) VALUES (?, ?)",
-        [projectName, projectDescription]
+        "INSERT INTO Project (projectName, projectDescription, Users_idUsers) VALUES (?, ?, ?)",
+        [projectName, projectDescription, idUsers]
       );
 
       return rows;
@@ -34,10 +34,11 @@ const projectService = {
       throw error;
     }
   },
+
   updateProject: async (idProject, projectName, projectDescription) => {
     try {
       const [rows] = await connection.query(
-        "UPDATE Projects SET projectName = ?, projectDescription = ? WHERE idProject = ?",
+        "UPDATE Project SET projectName = ?, projectDescription = ? WHERE idProject = ?",
         [projectName, projectDescription, idProject]
       );
 
@@ -49,7 +50,7 @@ const projectService = {
   deleteProject: async (idProject) => {
     try {
       const [rows] = await connection.query(
-        "DELETE FROM Projects WHERE idProject = ?",
+        "DELETE FROM Project WHERE idProject = ?",
         [idProject]
       );
 
