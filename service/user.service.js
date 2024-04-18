@@ -116,11 +116,11 @@ const userService = {
     }
   },
 
-  updateUserPermissions: async (idUsers, email, userTypeId) => {
+  updateUserPermissions: async (idUsers, email, name, userTypeId) => {
     try {
       const [rows] = await connection.query(
-        "UPDATE Users SET email = ?, Roles_idRole = ? WHERE idUsers = ?",
-        [email, userTypeId, idUsers]
+        "UPDATE Users SET email = ?, name = ?,Roles_idRole = ? WHERE idUsers = ?",
+        [email, name, userTypeId, idUsers]
       );
 
       return rows;
