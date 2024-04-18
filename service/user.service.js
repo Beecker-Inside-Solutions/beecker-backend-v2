@@ -19,6 +19,7 @@ const userService = {
           token = jwtMiddleware.generateAdminToken(user.idUsers);
         } else if (isBeecker) {
           // token = jwtMiddleware.generateBeeckerToken(user.idUsers);
+          token = jwtMiddleware.generateToken(user.idUsers);
         } else {
           token = jwtMiddleware.generateToken(user.idUsers);
         }
