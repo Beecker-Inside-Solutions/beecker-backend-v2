@@ -4,8 +4,8 @@ const userController = {
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
+      console.log(req.body);
       const response = await userService.validateUser(email, password);
-
       const token = response.token;
 
       res.status(200).json({ token: token, message: response.message });
@@ -65,19 +65,19 @@ const userController = {
         lastName,
         secondLastName,
         dateOfBirth,
-        idUserTypes,
+        userTypeId,
       } = req.body;
       const response = await userService.registerUser(
         email,
         password,
-        idUserTypes,
         name,
         lastName,
         secondLastName,
-        dateOfBirth
+        dateOfBirth,
+        userTypeId
       );
 
-      res.status(200).json(response);
+      res.status(200).json("User registered successfully");
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

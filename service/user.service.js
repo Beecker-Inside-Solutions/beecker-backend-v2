@@ -5,17 +5,20 @@ const userService = {
   validateUser: async (email, password) => {
     try {
       const [rows] = await connection.query(
-        "SELECT idUsers, isAdmin FROM Users WHERE email = ? AND password = SHA2(?,224)",
+        "SELECT idUsers, Roles_idRole FROM Users WHERE email = ? AND password = SHA2(?,224)",
         [email, password]
       );
 
       if (rows.length > 0) {
         const user = rows[0];
-        const isAdmin = user.isAdmin === 1;
+        const isAdmin = user.Roles_idRole === 1;
+        const isBeecker = user.Roles_idRole === 2;
 
         let token;
         if (isAdmin) {
           token = jwtMiddleware.generateAdminToken(user.idUsers);
+        } else if (isBeecker) {
+          // token = jwtMiddleware.generateBeeckerToken(user.idUsers);
         } else {
           token = jwtMiddleware.generateToken(user.idUsers);
         }
@@ -86,7 +89,7 @@ const userService = {
   ) => {
     try {
       const sql =
-        "INSERT INTO Users (email,password,name,lastName,secondLastName,dateOfBirth,Roles_idRole) VALUES (?,SHA2(?,224),?,?,?,?,?)";
+        "INSERT INTO Users (email, password, name, lastName, secondLastName, dateOfBirth, Roles_idRole) VALUES (?, SHA2(?,224), ?, ?, ?, ?, ?)";
       const [rows] = await connection.query(sql, [
         email,
         password,
@@ -96,7 +99,16 @@ const userService = {
         dateOfBirth,
         userTypeId,
       ]);
-
+      console.log("email", email);
+      console.log(
+        "password, name, lastName, secondLastName, dateOfBirth, userTypeId",
+        password,
+        name,
+        lastName,
+        secondLastName,
+        dateOfBirth,
+        userTypeId
+      );
       return rows;
     } catch (error) {
       throw error;
