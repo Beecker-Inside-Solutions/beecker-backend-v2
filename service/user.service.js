@@ -58,7 +58,7 @@ const userService = {
 
   getUserTypes: async () => {
     try {
-      const [rows] = await connection.query("SELECT * FROM UserTypes");
+      const [rows] = await connection.query("SELECT * FROM Roles");
 
       return rows;
     } catch (error) {
