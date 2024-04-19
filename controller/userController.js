@@ -4,11 +4,14 @@ const userController = {
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
-      console.log(req.body);
       const response = await userService.validateUser(email, password);
       const token = response.token;
 
-      res.status(200).json({ token: token, message: response.message });
+      res.status(200).json({
+        token: token,
+        message: response.message,
+        userId: response.userId,
+      });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

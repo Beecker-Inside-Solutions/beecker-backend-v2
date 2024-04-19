@@ -24,7 +24,11 @@ const userService = {
           token = jwtMiddleware.generateToken(user.idUsers);
         }
 
-        return { token: token, message: "Login successful" };
+        return {
+          token: token,
+          message: "Login successful",
+          userId: user.idUsers,
+        };
       } else {
         throw new Error("Invalid email or password");
       }
@@ -100,16 +104,6 @@ const userService = {
         dateOfBirth,
         userTypeId,
       ]);
-      console.log("email", email);
-      console.log(
-        "password, name, lastName, secondLastName, dateOfBirth, userTypeId",
-        password,
-        name,
-        lastName,
-        secondLastName,
-        dateOfBirth,
-        userTypeId
-      );
       return rows;
     } catch (error) {
       throw error;
