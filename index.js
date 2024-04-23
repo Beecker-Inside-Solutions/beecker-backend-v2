@@ -4,6 +4,7 @@ const userRouter = require("./routes/user");
 const rolesRouter = require("./routes/roles");
 const projectRouter = require("./routes/project");
 const notificationsRouter = require("./routes/notifications");
+const botsRouter = require("./routes/bots");
 
 const app = express();
 const port = 3001;
@@ -15,7 +16,7 @@ app.use("/", userRouter);
 app.use("/", rolesRouter);
 app.use("/", projectRouter);
 app.use("/", notificationsRouter);
-
+app.use("/", botsRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
