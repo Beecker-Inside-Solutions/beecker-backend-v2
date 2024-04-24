@@ -37,4 +37,10 @@ router.get(
   projectController.getProjectByUserIdAndProjectId
 );
 
+router.get(
+  "/projects/user/:idUsers/bots",
+  middleware.verifyJWT,
+  projectController.getProjectsAndBotsByUser
+);
+
 module.exports = router;

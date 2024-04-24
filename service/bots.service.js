@@ -84,6 +84,18 @@ const botService = {
     }
   },
 
+  getBotsByProject: async (idProject) => {
+    try {
+      const [rows] = await connection.query(
+        "SELECT Bots.*, Project.idProject, Project.projectName FROM Bots JOIN Project ON Bots.Project_idProject = Project.idProject WHERE Project.idProject = ?",
+        [idProject]
+      );
+      return rows;
+    } catch (error) {
+      throw error;
+    }
+  },
+
   setInactive: async (idBot) => {
     try {
       const [rows] = await connection.query(

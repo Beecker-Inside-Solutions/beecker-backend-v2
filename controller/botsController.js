@@ -71,6 +71,16 @@ const botsController = {
     }
   },
 
+  getBotsByProject: async (req, res) => {
+    try {
+      const { idProject } = req.params;
+      const bots = await botService.getBotsByProject(idProject);
+      res.status(200).json(bots);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
   setInactive: async (req, res) => {
     try {
       const { idBots } = req.params;

@@ -84,6 +84,16 @@ const projectController = {
       res.status(500).json({ message: error.message });
     }
   },
+
+  getProjectsAndBotsByUser: async (req, res) => {
+    try {
+      const { idUsers } = req.params;
+      const projects = await projectService.getProjectsAndBotsByUser(idUsers);
+      res.status(200).json(projects);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
 };
 
 module.exports = projectController;

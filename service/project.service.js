@@ -86,6 +86,54 @@ const projectService = {
       throw error;
     }
   },
+
+  getProjectsAndBotsByUser: async (idUsers) => {
+    try {
+      const [projects] = await connection.query(
+        `
+        SELECT 
+          Project.idProject,
+          Project.projectName,
+          Project.projectDescription,
+          Bots.idBots,
+          Bots.botName,
+          Bots.isExecuting
+        FROM 
+          Project
+        LEFT JOIN Bots ON Project.idProject = Bots.Project_idProject
+        WHERE 
+          Project.Users_idUsers = ?
+      `,
+        [idUsers]
+      );
+      // Use a map to accumulate bots under their respective projects
+      const projectsMap = {};
+      projects.forEach((project) => {
+        // If the project hasn't been added to the map, add it
+        if (!projectsMap[project.idProject]) {
+          projectsMap[project.idProject] = {
+            idProject: project.idProject,
+            projectName: project.projectName,
+            projectDescription: project.projectDescription,
+            bots: [],
+          };
+        }
+        // Add the bot to the project if it exists
+        if (project.idBots) {
+          projectsMap[project.idProject].bots.push({
+            idBots: project.idBots,
+            botName: project.botName,
+            isExecuting: project.isExecuting,
+          });
+        }
+      });
+
+      // Convert the map to an array of projects with bots
+      return Object.values(projectsMap);
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = projectService;
