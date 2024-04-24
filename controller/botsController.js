@@ -65,8 +65,6 @@ const botsController = {
     try {
       const { idUser } = req.params;
       const bots = await botService.getBotsByUser(idUser);
-      console.log("params in controller", req.params);
-      console.log(bots);
       res.status(200).json(bots);
     } catch (error) {
       res.status(500).json({ message: error.message });
