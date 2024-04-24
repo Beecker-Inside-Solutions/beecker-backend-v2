@@ -83,7 +83,6 @@ const itemService = {
 
   calculateHoursSaved: async (botId) => {
     try {
-      // SQL to fetch executionStart and executionFinish for all items of a specific bot, ordered by executionStart
       const sql = `
         SELECT idItem, executionStart, executionFinish
         FROM Items
@@ -93,23 +92,20 @@ const itemService = {
       const [items] = await connection.query(sql, [botId]);
 
       let results = [];
-      let previousDuration = 0; // Variable to store the duration of the previous task
-
+      let previousDuration = 0;
       items.forEach((item, index) => {
         if (item.executionFinish && item.executionStart) {
           const start = new Date(item.executionStart);
           const finish = new Date(item.executionFinish);
-          const duration = (finish - start) / 3600000; // Duration in hours
+          const duration = (finish - start) / 3600000;
 
           if (index > 0) {
-            // Skip the first item since there's no previous item to compare with
-            const hoursSaved = previousDuration - duration; // Calculate hours saved (could be negative if more time was spent)
+            const hoursSaved = previousDuration - duration;
             results.push({
               itemId: item.idItem,
-              hoursSaved: hoursSaved, // Keeping two decimals for precision
+              hoursSaved: hoursSaved,
             });
           }
-          // Update previousDuration for the next iteration
           previousDuration = duration;
         }
       });
