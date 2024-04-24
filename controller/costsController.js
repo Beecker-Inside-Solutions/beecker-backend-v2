@@ -1,0 +1,31 @@
+const costService = require("../service/costs.service");
+
+const costsController = {
+  addCost: async (req, res) => {
+    try {
+      const { productionCost, customerPayment, handProcessTime, Bots_idBots } =
+        req.body;
+      await costService.addCost(
+        productionCost,
+        customerPayment,
+        handProcessTime,
+        Bots_idBots
+      );
+      res.status(200).json({ message: "Cost added successfully!" });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+  getCostByBotId: async (req, res) => {
+    try {
+      const { botId } = req.params;
+      const costs = await costService.getCostByBotId(botId);
+      res.status(200).json(costs);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+};
+
+module.exports = costsController;
