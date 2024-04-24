@@ -74,8 +74,8 @@ const botService = {
     try {
       const [rows] = await connection.query(
         `SELECT Bots.* FROM Bots
-         JOIN Project ON Bots.Project_idProject = Project.idProject
-         WHERE Project.Users_idUsers = ?`,
+             JOIN Project ON Bots.Project_idProject = Project.idProject
+             WHERE Project.Users_idUsers = ?`,
         [idUsers]
       );
       return rows;
