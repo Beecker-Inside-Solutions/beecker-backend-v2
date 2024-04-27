@@ -90,6 +90,59 @@ const botsController = {
       res.status(500).json({ message: error.message });
     }
   },
+
+  getBotExecutions: async (req, res) => {
+    try {
+      const { idBot } = req.params;
+      const { timeframe } = req.body;
+
+      if (!["weekly", "monthly", "yearly"].includes(timeframe)) {
+        return res.status(400).json({
+          message:
+            "Invalid timeframe specified. Please choose 'weekly', 'monthly', or 'yearly'.",
+          status_code: 0,
+        });
+      }
+
+      const executionData = await botService.getBotExecutions(idBot, timeframe);
+
+      const labelsSuccess = [];
+      const dataSuccess = [];
+      const labelsFailed = [];
+      const dataFailed = [];
+
+      executionData.forEach((data) => {
+        let label;
+        if (timeframe === "weekly") {
+          label = data.dayMonthTime; // assuming dayMonthTime is for 'weekly'
+        } else if (timeframe === "monthly") {
+          label = data.dayMonth; // assuming dayMonth is for 'monthly'
+        } else if (timeframe === "yearly") {
+          label = data.year; // assuming year is for 'yearly'
+        }
+
+        labelsSuccess.push(label || "No Date");
+        dataSuccess.push(data.successCount);
+        labelsFailed.push(label || "No Date");
+        dataFailed.push(data.failureCount);
+      });
+
+      res.json({
+        message: "SUCCESS",
+        labelsSuccess: labelsSuccess,
+        dataSuccess: dataSuccess,
+        labelsFailed: labelsFailed,
+        dataFailed: dataFailed,
+        status_code: 1,
+      });
+    } catch (error) {
+      console.error("Execution data fetch error:", error);
+      res.status(500).json({
+        message: error.message,
+        status_code: 0,
+      });
+    }
+  },
 };
 
 module.exports = botsController;

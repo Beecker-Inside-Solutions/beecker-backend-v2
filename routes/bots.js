@@ -58,4 +58,6 @@ router.post(
   botsController.setInactive
 );
 
+router.post("/bots/executions/:idBot", botsController.getBotExecutions);
+
 module.exports = router;
