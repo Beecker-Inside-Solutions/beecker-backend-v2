@@ -158,6 +158,69 @@ const botService = {
       throw error;
     }
   },
+
+  calculateSuccessandFailRate: async (idBot, timeframe) => {
+    let sql; // Declare `sql` variable to ensure it's scoped correctly
+    switch (timeframe) {
+      case "weekly":
+        sql = `
+            SELECT 
+                DATE_FORMAT(executionStart, '%Y-%m-%d %H:%i') AS timeGroup,
+                COUNT(*) AS totalExecutions,
+                SUM(CASE WHEN executionStatus = 1 THEN 1 ELSE 0 END) AS successCount,
+                SUM(CASE WHEN executionStatus = 0 THEN 1 ELSE 0 END) AS failureCount
+            FROM Items
+            WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
+            GROUP BY timeGroup
+            ORDER BY executionStart;
+        `;
+        break;
+      case "monthly":
+        sql = `
+            SELECT 
+                DATE_FORMAT(executionStart, '%Y-%m') AS timeGroup,
+                COUNT(*) AS totalExecutions,
+                SUM(CASE WHEN executionStatus = 1 THEN 1 ELSE 0 END) AS successCount,
+                SUM(CASE WHEN executionStatus = 0 THEN 1 ELSE 0 END) AS failureCount
+            FROM Items
+            WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 YEAR)
+            GROUP BY timeGroup
+            ORDER BY executionStart;
+        `;
+        break;
+      case "yearly":
+        sql = `
+            SELECT 
+                DATE_FORMAT(executionStart, '%Y') AS timeGroup,
+                COUNT(*) AS totalExecutions,
+                SUM(CASE WHEN executionStatus = 1 THEN 1 ELSE 0 END) AS successCount,
+                SUM(CASE WHEN executionStatus = 0 THEN 1 ELSE 0 END) AS failureCount
+            FROM Items
+            WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 5 YEAR)
+            GROUP BY timeGroup
+            ORDER BY executionStart;
+        `;
+        break;
+      default:
+        throw new Error("Invalid timeframe specified");
+    }
+    try {
+      const [results] = await connection.query(sql, [idBot]);
+      return results.map((row) => ({
+        ...row,
+        successRate:
+          row.totalExecutions > 0
+            ? (row.successCount / row.totalExecutions) * 100
+            : 0,
+        failureRate:
+          row.totalExecutions > 0
+            ? (row.failureCount / row.totalExecutions) * 100
+            : 0,
+      }));
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = botService;

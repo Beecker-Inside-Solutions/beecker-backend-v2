@@ -122,9 +122,9 @@ const botsController = {
         }
 
         labelsSuccess.push(label || "No Date");
-        dataSuccess.push(data.successCount);
+        dataSuccess.push(parseInt(data.successCount, 10)); // Convert to integer
         labelsFailed.push(label || "No Date");
-        dataFailed.push(data.failureCount);
+        dataFailed.push(parseInt(data.failureCount, 10)); // Convert to integer
       });
 
       res.json({
@@ -137,6 +137,37 @@ const botsController = {
       });
     } catch (error) {
       console.error("Execution data fetch error:", error);
+      res.status(500).json({
+        message: error.message,
+        status_code: 0,
+      });
+    }
+  },
+
+  getSuccessAndFailRate: async (req, res) => {
+    try {
+      const { idBot } = req.params;
+      const { timeframe } = req.body;
+
+      if (!["weekly", "monthly", "yearly"].includes(timeframe)) {
+        return res.status(400).json({
+          message:
+            "Invalid timeframe specified. Please choose 'weekly', 'monthly', or 'yearly'.",
+          status_code: 0,
+        });
+      }
+
+      const rates = await botService.calculateSuccessandFailRate(
+        idBot,
+        timeframe
+      );
+      res.status(200).json({
+        message: "Success and failure rates retrieved successfully.",
+        data: rates,
+        status_code: 1,
+      });
+    } catch (error) {
+      console.error("Error retrieving success and failure rates:", error);
       res.status(500).json({
         message: error.message,
         status_code: 0,

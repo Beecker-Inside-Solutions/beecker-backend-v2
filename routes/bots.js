@@ -60,4 +60,6 @@ router.post(
 
 router.post("/bots/executions/:idBot", botsController.getBotExecutions);
 
+router.post("/bot/executionsRate/:idBot", botsController.getSuccessAndFailRate);
+
 module.exports = router;
