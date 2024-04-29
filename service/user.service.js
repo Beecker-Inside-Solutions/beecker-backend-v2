@@ -88,7 +88,6 @@ const userService = {
     password,
     name,
     lastName,
-    secondLastName,
     dateOfBirth,
     userTypeId
   ) => {
@@ -106,13 +105,12 @@ const userService = {
 
       // If the email does not exist, proceed with creating the new user
       const sql =
-        "INSERT INTO Users (email, password, name, lastName, secondLastName, dateOfBirth, Roles_idRole) VALUES (?, SHA2(?,224), ?, ?, ?, ?, ?)";
+        "INSERT INTO Users (email, password, name, lastName, dateOfBirth, Roles_idRole) VALUES (?, SHA2(?,224), ?, ?, ?, ?)";
       const [rows] = await connection.query(sql, [
         email,
         password,
         name,
         lastName,
-        secondLastName,
         dateOfBirth,
         userTypeId,
       ]);
