@@ -222,34 +222,71 @@ const botService = {
     }
   },
 
-  calculateRoi: async (idBot) => {
-    // ROI=(Net Profit​/Total Investment)×100
+  calculateRoi: async (idBot, timeframe) => {
+    let sql;
+    switch (timeframe) {
+      case "weekly":
+        sql = `
+                SELECT 
+                    DATE_FORMAT(executionStart, '%Y-%u') AS weekOfYear,
+                    SUM(C.productionCost) AS totalCost, 
+                    SUM(C.customerPayment) AS totalRevenue
+                FROM Costs C
+                INNER JOIN Bots B ON C.Bots_idBots = B.idBots
+                INNER JOIN Items I ON B.idBots = I.Bots_idBots
+                WHERE B.idBots = ? AND DATE(I.executionStart) >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
+                GROUP BY weekOfYear
+            `;
+        break;
+      case "monthly":
+        sql = `
+                SELECT 
+                    DATE_FORMAT(executionStart, '%Y-%m') AS month,
+                    SUM(C.productionCost) AS totalCost, 
+                    SUM(C.customerPayment) AS totalRevenue
+                FROM Costs C
+                INNER JOIN Bots B ON C.Bots_idBots = B.idBots
+                INNER JOIN Items I ON B.idBots = I.Bots_idBots
+                WHERE B.idBots = ? AND DATE(I.executionStart) >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
+                GROUP BY month
+            `;
+        break;
+      case "yearly":
+        sql = `
+                SELECT 
+                    YEAR(executionStart) AS year,
+                    SUM(C.productionCost) AS totalCost, 
+                    SUM(C.customerPayment) AS totalRevenue
+                FROM Costs C
+                INNER JOIN Bots B ON C.Bots_idBots = B.idBots
+                INNER JOIN Items I ON B.idBots = I.Bots_idBots
+                WHERE B.idBots = ? AND DATE(I.executionStart) >= DATE_SUB(NOW(), INTERVAL 1 YEAR)
+                GROUP BY year
+            `;
+        break;
+      default:
+        throw new Error("Invalid timeframe specified");
+    }
     try {
-      const [costs] = await connection.query(
-        `
-        SELECT SUM(productionCost) AS totalCost, SUM(customerPayment) AS totalRevenue
-        FROM Costs
-        WHERE Bots_idBots = ?
-      `,
-        [idBot]
-      );
-
-      if (costs.length === 0) {
-        throw new Error("No cost data found for the specified bot");
+      const [results] = await connection.query(sql, [idBot]);
+      if (results.length === 0) {
+        return {
+          message: "No financial data available for the specified timeframe",
+        };
       }
 
-      const { totalCost, totalRevenue } = costs[0];
-      const netProfit = totalRevenue - totalCost;
-
-      // Check for cases where totalCost is zero to avoid division by zero
-      const roi = totalCost > 0 ? (netProfit / totalCost) * 100 : 0;
-
-      return {
-        totalCost,
-        totalRevenue,
-        netProfit,
-        roi,
-      };
+      return results.map((result) => {
+        const netProfit = result.totalRevenue - result.totalCost;
+        const roi =
+          result.totalCost > 0 ? (netProfit / result.totalCost) * 100 : 0;
+        return {
+          timeGroup: result.weekOfYear || result.month || result.year,
+          totalCost: result.totalCost,
+          totalRevenue: result.totalRevenue,
+          netProfit,
+          roi,
+        };
+      });
     } catch (error) {
       console.error("Failed to calculate ROI:", error);
       throw error;
