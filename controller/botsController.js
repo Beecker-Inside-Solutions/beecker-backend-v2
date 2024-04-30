@@ -174,6 +174,24 @@ const botsController = {
       });
     }
   },
+
+  calculateRoi: async (req, res) => {
+    try {
+      const { idBot } = req.params;
+      const roi = await botService.calculateRoi(idBot);
+      res.status(200).json({
+        message: "ROI calculated successfully.",
+        data: roi,
+        status_code: 1,
+      });
+    } catch (error) {
+      console.error("Error calculating ROI:", error);
+      res.status(500).json({
+        message: error.message,
+        status_code: 0,
+      });
+    }
+  },
 };
 
 module.exports = botsController;

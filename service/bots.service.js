@@ -221,6 +221,40 @@ const botService = {
       throw error;
     }
   },
+
+  calculateRoi: async (idBot) => {
+    // ROI=(Net Profit​/Total Investment)×100
+    try {
+      const [costs] = await connection.query(
+        `
+        SELECT SUM(productionCost) AS totalCost, SUM(customerPayment) AS totalRevenue
+        FROM Costs
+        WHERE Bots_idBots = ?
+      `,
+        [idBot]
+      );
+
+      if (costs.length === 0) {
+        throw new Error("No cost data found for the specified bot");
+      }
+
+      const { totalCost, totalRevenue } = costs[0];
+      const netProfit = totalRevenue - totalCost;
+
+      // Check for cases where totalCost is zero to avoid division by zero
+      const roi = totalCost > 0 ? (netProfit / totalCost) * 100 : 0;
+
+      return {
+        totalCost,
+        totalRevenue,
+        netProfit,
+        roi,
+      };
+    } catch (error) {
+      console.error("Failed to calculate ROI:", error);
+      throw error;
+    }
+  },
 };
 
 module.exports = botService;
