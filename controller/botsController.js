@@ -174,6 +174,34 @@ const botsController = {
       });
     }
   },
+
+  calculateRoi: async (req, res) => {
+    try {
+      const { idBot } = req.params;
+      const { timeframe } = req.body;
+
+      if (!["weekly", "monthly", "yearly"].includes(timeframe)) {
+        return res.status(400).json({
+          message:
+            "Invalid timeframe specified. Please choose 'weekly', 'monthly', or 'yearly'.",
+          status_code: 0,
+        });
+      }
+
+      const roi = await botService.calculateRoi(idBot, timeframe);
+      res.status(200).json({
+        message: "ROI calculated successfully.",
+        data: roi,
+        status_code: 1,
+      });
+    } catch (error) {
+      console.error("Error calculating ROI:", error);
+      res.status(500).json({
+        message: error.message,
+        status_code: 0,
+      });
+    }
+  },
 };
 
 module.exports = botsController;

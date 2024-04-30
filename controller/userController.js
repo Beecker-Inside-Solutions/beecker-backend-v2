@@ -66,7 +66,6 @@ const userController = {
         password,
         name,
         lastName,
-        secondLastName,
         dateOfBirth,
         userTypeId,
       } = req.body;
@@ -75,7 +74,6 @@ const userController = {
         password,
         name,
         lastName,
-        secondLastName,
         dateOfBirth,
         userTypeId
       );
