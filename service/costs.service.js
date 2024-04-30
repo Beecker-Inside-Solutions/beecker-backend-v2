@@ -5,17 +5,19 @@ const costService = {
     productionCost,
     customerPayment,
     handProcessTime,
+    createdAt,
     Bots_idBots
   ) => {
     try {
       const sql = `
-          INSERT INTO Costs (productionCost, customerPayment, handProcessTime, Bots_idBots)
-          VALUES (?, ?, ?, ?)
+          INSERT INTO Costs (productionCost, customerPayment, handProcessTime, createdAt,Bots_idBots)
+          VALUES (?, ?, ?, ?,?)
         `;
       const values = [
         productionCost,
         customerPayment,
         handProcessTime,
+        createdAt,
         Bots_idBots,
       ];
       const [result] = await connection.query(sql, values);

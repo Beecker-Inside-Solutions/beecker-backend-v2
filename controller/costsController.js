@@ -3,12 +3,18 @@ const costService = require("../service/costs.service");
 const costsController = {
   addCost: async (req, res) => {
     try {
-      const { productionCost, customerPayment, handProcessTime, Bots_idBots } =
-        req.body;
+      const {
+        productionCost,
+        customerPayment,
+        handProcessTime,
+        createdAt,
+        Bots_idBots,
+      } = req.body;
       await costService.addCost(
         productionCost,
         customerPayment,
         handProcessTime,
+        createdAt,
         Bots_idBots
       );
       res.status(200).json({ message: "Cost added successfully!" });

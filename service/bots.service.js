@@ -228,45 +228,43 @@ const botService = {
       case "weekly":
         sql = `
                 SELECT 
-                    DATE_FORMAT(executionStart, '%Y-%u') AS weekOfYear,
-                    SUM(C.productionCost) AS totalCost, 
-                    SUM(C.customerPayment) AS totalRevenue
-                FROM Costs C
-                INNER JOIN Bots B ON C.Bots_idBots = B.idBots
-                INNER JOIN Items I ON B.idBots = I.Bots_idBots
-                WHERE B.idBots = ? AND DATE(I.executionStart) >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
+                    DATE_FORMAT(DATE(createdAt), '%X-%V') AS weekOfYear,
+                    SUM(productionCost) AS totalCost, 
+                    SUM(customerPayment) AS totalRevenue
+                FROM Costs
+                WHERE Bots_idBots = ? AND createdAt >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
                 GROUP BY weekOfYear
             `;
         break;
       case "monthly":
         sql = `
                 SELECT 
-                    DATE_FORMAT(executionStart, '%Y-%m') AS month,
-                    SUM(C.productionCost) AS totalCost, 
-                    SUM(C.customerPayment) AS totalRevenue
-                FROM Costs C
-                INNER JOIN Bots B ON C.Bots_idBots = B.idBots
-                INNER JOIN Items I ON B.idBots = I.Bots_idBots
-                WHERE B.idBots = ? AND DATE(I.executionStart) >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
+                    DATE_FORMAT(DATE(createdAt), '%Y-%m') AS month,
+                    SUM(productionCost) AS totalCost, 
+                    SUM(customerPayment) AS totalRevenue
+                FROM Costs
+                WHERE Bots_idBots = ? AND createdAt >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
                 GROUP BY month
             `;
         break;
       case "yearly":
         sql = `
-                SELECT 
-                    YEAR(executionStart) AS year,
-                    SUM(C.productionCost) AS totalCost, 
-                    SUM(C.customerPayment) AS totalRevenue
-                FROM Costs C
-                INNER JOIN Bots B ON C.Bots_idBots = B.idBots
-                INNER JOIN Items I ON B.idBots = I.Bots_idBots
-                WHERE B.idBots = ? AND DATE(I.executionStart) >= DATE_SUB(NOW(), INTERVAL 1 YEAR)
-                GROUP BY year
-            `;
+                  SELECT 
+                      YEAR(DATE(createdAt)) AS year,
+                      SUM(productionCost) AS totalCost, 
+                      SUM(customerPayment) AS totalRevenue
+                  FROM Costs
+                  WHERE Bots_idBots = ? AND YEAR(DATE(createdAt)) = YEAR(CURDATE())
+                  GROUP BY year
+              `;
         break;
+
       default:
         throw new Error("Invalid timeframe specified");
     }
+    console.log("Executing SQL:", sql);
+    console.log("For Bot ID:", idBot);
+
     try {
       const [results] = await connection.query(sql, [idBot]);
       if (results.length === 0) {
@@ -289,7 +287,7 @@ const botService = {
       });
     } catch (error) {
       console.error("Failed to calculate ROI:", error);
-      throw error;
+      throw new Error(`Error when calculating ROI: ${error.message}`);
     }
   },
 };
