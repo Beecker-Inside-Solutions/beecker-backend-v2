@@ -4,14 +4,18 @@ const userController = require("../controller/userController");
 const middleware = require("../middleware/jwt-middleware");
 
 router.post("/login", userController.login);
+
 router.post("/register", userController.registerUser);
+
 router.get(
   "/users",
   middleware.verifyJWT,
   middleware.verifyAdminJWT,
   userController.getUsers
 );
+
 router.get("/users/:idUsers", middleware.verifyJWT, userController.getUserById);
+
 router.delete(
   "/users/delete/:idUsers",
   middleware.verifyJWT,
