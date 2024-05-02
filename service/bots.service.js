@@ -410,8 +410,8 @@ const botService = {
       }
 
       return results.map((result) => {
-        const totalExecutions = result.totalExecutions;
-        const successCount = result.successCount;
+        const totalExecutions = parseInt(result.totalExecutions, 10); // Ensure totalExecutions is an integer
+        const successCount = parseInt(result.successCount, 10); // Convert successCount to integer
         const averageSuccessRate =
           totalExecutions > 0 ? (successCount / totalExecutions) * 100 : 0;
 
@@ -419,7 +419,7 @@ const botService = {
           timeGroup: result.weekYear || result.month || result.year,
           totalExecutions: totalExecutions,
           successCount: successCount,
-          averageSuccessRate: averageSuccessRate,
+          averageSuccessRate: averageSuccessRate, // Optionally round to 2 decimal places
         };
       });
     } catch (error) {
