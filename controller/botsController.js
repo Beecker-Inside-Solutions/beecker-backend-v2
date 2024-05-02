@@ -202,6 +202,38 @@ const botsController = {
       });
     }
   },
+  getSavedHours: async (req, res) => {
+    try {
+      const { idBot } = req.params; // Ensure the bot ID is passed via the URL parameter
+      const { timeframe } = req.body; // Timeframe is extracted from the POST body
+
+      // Validate the timeframe
+      if (!["weekly", "monthly", "yearly"].includes(timeframe)) {
+        return res.status(400).json({
+          message:
+            "Invalid timeframe specified. Please choose 'weekly', 'monthly', or 'yearly'.",
+          status_code: 0,
+        });
+      }
+
+      const savedHours = await botService.getSavedHours(idBot, timeframe);
+
+      // Success response
+      res.status(200).json({
+        message: "Saved hours calculated successfully.",
+        data: savedHours,
+        status_code: 1,
+      });
+    } catch (error) {
+      // Log the error and return a 500 status code with error details
+      console.error("Error calculating saved hours:", error);
+      res.status(500).json({
+        message: error.message,
+        status_code: 0,
+      });
+    }
+  },
+
 };
 
 module.exports = botsController;

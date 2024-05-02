@@ -262,9 +262,6 @@ const botService = {
       default:
         throw new Error("Invalid timeframe specified");
     }
-    console.log("Executing SQL:", sql);
-    console.log("For Bot ID:", idBot);
-
     try {
       const [results] = await connection.query(sql, [idBot]);
       if (results.length === 0) {
@@ -288,6 +285,69 @@ const botService = {
     } catch (error) {
       console.error("Failed to calculate ROI:", error);
       throw new Error(`Error when calculating ROI: ${error.message}`);
+    }
+  },
+  getSavedHours: async (idBot, timeframe) => {
+    let sql;
+    const manualMultiplier = 3; // Assume manual tasks take 3 times longer than automated
+    switch (timeframe) {
+      case "weekly":
+        sql = `
+          SELECT 
+            DATE_FORMAT(executionStart, '%Y-%u') AS week,
+            SUM(TIMESTAMPDIFF(SECOND, executionStart, executionFinish) / 3600.0) AS automatedHours,
+            SUM(TIMESTAMPDIFF(SECOND, executionStart, executionFinish) / 3600.0 * ${manualMultiplier}) AS manualHours
+          FROM Items
+          WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
+          GROUP BY week
+        `;
+        break;
+      case "monthly":
+        sql = `
+          SELECT 
+            DATE_FORMAT(executionStart, '%Y-%m') AS month,
+            SUM(TIMESTAMPDIFF(SECOND, executionStart, executionFinish) / 3600.0) AS automatedHours,
+            SUM(TIMESTAMPDIFF(SECOND, executionStart, executionFinish) / 3600.0 * ${manualMultiplier}) AS manualHours
+          FROM Items
+          WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
+          GROUP BY month
+        `;
+        break;
+      case "yearly":
+        sql = `
+          SELECT 
+            YEAR(executionStart) AS year,
+            SUM(TIMESTAMPDIFF(SECOND, executionStart, executionFinish) / 3600.0) AS automatedHours,
+            SUM(TIMESTAMPDIFF(SECOND, executionStart, executionFinish) / 3600.0 * ${manualMultiplier}) AS manualHours
+          FROM Items
+          WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 YEAR)
+          GROUP BY year
+        `;
+        break;
+      default:
+        throw new Error("Invalid timeframe specified");
+    }
+
+    try {
+      const [results] = await connection.query(sql, [idBot]);
+      return results.map((result) => {
+        const automatedHours = Number(result.automatedHours || 0);
+        const manualHours = Number(result.manualHours || 0);
+        const savedHours = manualHours - automatedHours;
+        const savedPercentage =
+          manualHours > 0 ? (savedHours / manualHours) * 100 : 0;
+
+        return {
+          timeGroup: result.week || result.month || result.year,
+          automatedHours: automatedHours,
+          manualHours: manualHours,
+          savedHours: savedHours,
+          savedPercentage: savedPercentage,
+        };
+      });
+    } catch (error) {
+      console.error("Failed to calculate saved hours:", error);
+      throw error;
     }
   },
 };

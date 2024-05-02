@@ -64,4 +64,6 @@ router.post("/bot/executionsRate/:idBot", botsController.getSuccessAndFailRate);
 
 router.post("/bots/roi/:idBot", botsController.calculateRoi);
 
+router.post("/bots/savedHours/:idBot", botsController.getSavedHours);
+
 module.exports = router;
