@@ -66,4 +66,6 @@ router.post("/bots/roi/:idBot", botsController.calculateRoi);
 
 router.post("/bots/savedHours/:idBot", botsController.getSavedHours);
 
+router.post("/bots/averageSuccess/:idBot", botsController.calculateAverageSuccess);
+
 module.exports = router;

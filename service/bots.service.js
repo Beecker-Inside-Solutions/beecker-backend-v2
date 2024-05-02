@@ -160,50 +160,51 @@ const botService = {
   },
 
   calculateSuccessandFailRate: async (idBot, timeframe) => {
-    let sql; // Declare `sql` variable to ensure it's scoped correctly
+    let sql;
     switch (timeframe) {
       case "weekly":
         sql = `
-            SELECT 
-                DATE_FORMAT(executionStart, '%Y-%m-%d %H:%i') AS timeGroup,
-                COUNT(*) AS totalExecutions,
-                SUM(CASE WHEN executionStatus = 1 THEN 1 ELSE 0 END) AS successCount,
-                SUM(CASE WHEN executionStatus = 0 THEN 1 ELSE 0 END) AS failureCount
-            FROM Items
-            WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
-            GROUP BY timeGroup
-            ORDER BY executionStart;
+          SELECT 
+            DATE_FORMAT(executionStart, '%Y-%u') AS timeGroup,
+            COUNT(*) AS totalExecutions,
+            SUM(CASE WHEN executionStatus = 1 THEN 1 ELSE 0 END) AS successCount,
+            SUM(CASE WHEN executionStatus = 0 THEN 1 ELSE 0 END) AS failureCount
+          FROM Items
+          WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
+          GROUP BY timeGroup
+          ORDER BY executionStart;
         `;
         break;
       case "monthly":
         sql = `
-            SELECT 
-                DATE_FORMAT(executionStart, '%Y-%m') AS timeGroup,
-                COUNT(*) AS totalExecutions,
-                SUM(CASE WHEN executionStatus = 1 THEN 1 ELSE 0 END) AS successCount,
-                SUM(CASE WHEN executionStatus = 0 THEN 1 ELSE 0 END) AS failureCount
-            FROM Items
-            WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 YEAR)
-            GROUP BY timeGroup
-            ORDER BY executionStart;
+          SELECT 
+            DATE_FORMAT(executionStart, '%Y-%m') AS timeGroup,
+            COUNT(*) AS totalExecutions,
+            SUM(CASE WHEN executionStatus = 1 THEN 1 ELSE 0 END) AS successCount,
+            SUM(CASE WHEN executionStatus = 0 THEN 1 ELSE 0 END) AS failureCount
+          FROM Items
+          WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
+          GROUP BY timeGroup
+          ORDER BY executionStart;
         `;
         break;
       case "yearly":
         sql = `
-            SELECT 
-                DATE_FORMAT(executionStart, '%Y') AS timeGroup,
-                COUNT(*) AS totalExecutions,
-                SUM(CASE WHEN executionStatus = 1 THEN 1 ELSE 0 END) AS successCount,
-                SUM(CASE WHEN executionStatus = 0 THEN 1 ELSE 0 END) AS failureCount
-            FROM Items
-            WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 5 YEAR)
-            GROUP BY timeGroup
-            ORDER BY executionStart;
+          SELECT 
+            DATE_FORMAT(executionStart, '%Y') AS timeGroup,
+            COUNT(*) AS totalExecutions,
+            SUM(CASE WHEN executionStatus = 1 THEN 1 ELSE 0 END) AS successCount,
+            SUM(CASE WHEN executionStatus = 0 THEN 1 ELSE 0 END) AS failureCount
+          FROM Items
+          WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 YEAR)
+          GROUP BY timeGroup
+          ORDER BY executionStart;
         `;
         break;
       default:
         throw new Error("Invalid timeframe specified");
     }
+
     try {
       const [results] = await connection.query(sql, [idBot]);
       return results.map((row) => ({
@@ -218,6 +219,7 @@ const botService = {
             : 0,
       }));
     } catch (error) {
+      console.error("Failed to calculate success and failure rates:", error);
       throw error;
     }
   },
@@ -347,6 +349,81 @@ const botService = {
       });
     } catch (error) {
       console.error("Failed to calculate saved hours:", error);
+      throw error;
+    }
+  },
+
+  calculateAverageSuccess: async (idBot, timeframe) => {
+    let sql;
+    switch (timeframe) {
+      case "weekly":
+        sql = `
+                SELECT 
+                    DATE_FORMAT(executionStart, '%X-%V') AS weekYear,
+                    COUNT(*) AS totalExecutions,
+                    SUM(CASE WHEN executionStatus = 1 THEN 1 ELSE 0 END) AS successCount
+                FROM Items
+                WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
+                GROUP BY weekYear
+                ORDER BY executionStart;
+            `;
+        break;
+      case "monthly":
+        sql = `
+                SELECT 
+                    DATE_FORMAT(executionStart, '%Y-%m') AS month,
+                    COUNT(*) AS totalExecutions,
+                    SUM(CASE WHEN executionStatus = 1 THEN 1 ELSE 0 END) AS successCount
+                FROM Items
+                WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
+                GROUP BY month
+                ORDER BY executionStart;
+            `;
+        break;
+      case "yearly":
+        sql = `
+                SELECT 
+                    DATE_FORMAT(executionStart, '%Y') AS year,
+                    COUNT(*) AS totalExecutions,
+                    SUM(CASE WHEN executionStatus = 1 THEN 1 ELSE 0 END) AS successCount
+                FROM Items
+                WHERE Bots_idBots = ? AND executionStart >= DATE_SUB(NOW(), INTERVAL 1 YEAR)
+                GROUP BY year
+                ORDER BY executionStart;
+            `;
+        break;
+      default:
+        throw new Error(
+          "Invalid timeframe specified. Choose 'weekly', 'monthly', or 'yearly'."
+        );
+    }
+
+    try {
+      const [results] = await connection.query(sql, [idBot]);
+      if (results.length === 0) {
+        return {
+          message:
+            "No execution data available for this bot within the specified timeframe.",
+          data: [],
+          status_code: 0,
+        };
+      }
+
+      return results.map((result) => {
+        const totalExecutions = result.totalExecutions;
+        const successCount = result.successCount;
+        const averageSuccessRate =
+          totalExecutions > 0 ? (successCount / totalExecutions) * 100 : 0;
+
+        return {
+          timeGroup: result.weekYear || result.month || result.year,
+          totalExecutions: totalExecutions,
+          successCount: successCount,
+          averageSuccessRate: averageSuccessRate,
+        };
+      });
+    } catch (error) {
+      console.error("Failed to calculate average success rate:", error);
       throw error;
     }
   },

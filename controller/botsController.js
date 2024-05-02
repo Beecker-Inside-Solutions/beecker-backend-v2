@@ -234,6 +234,37 @@ const botsController = {
     }
   },
 
+  calculateAverageSuccess: async (req, res) => {
+    try {
+      const { idBot } = req.params;
+      const { timeframe } = req.body; // Retrieve the timeframe from the query parameters
+
+      // Validate the provided timeframe
+      if (!["weekly", "monthly", "yearly"].includes(timeframe)) {
+        return res.status(400).json({
+          message:
+            "Invalid or missing timeframe. Please specify 'weekly', 'monthly', or 'yearly'.",
+          status_code: 0,
+        });
+      }
+
+      const averageSuccess = await botService.calculateAverageSuccess(
+        idBot,
+        timeframe
+      );
+      res.status(200).json({
+        message: "Average success calculated successfully.",
+        data: averageSuccess,
+        status_code: 1,
+      });
+    } catch (error) {
+      console.error("Error calculating average success:", error);
+      res.status(500).json({
+        message: error.message,
+        status_code: 0,
+      });
+    }
+  },
 };
 
 module.exports = botsController;
