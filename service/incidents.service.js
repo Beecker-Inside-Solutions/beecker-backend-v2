@@ -23,6 +23,17 @@ const incidentService = {
         }
     },
 
+    getAllIncidents: async () => {
+        try {
+            const query = "SELECT * FROM Incidents";
+            const [rows] = await connection.query(query);
+
+            return rows;
+        } catch (error) {
+            throw error;
+        }
+    },
+
     updateIncident: async (incidentID = "", incidentName = "", responsible = "", startDate = "", endDate = "", status = "", description = "", progressDate = "") => {
         try {
             const query = "UPDATE Incidents SET incidentName = ?, responsible = ?, startDate = ?, endDate = ?, status = ?, description = ?, progressDate = ? WHERE idIncident = ?";

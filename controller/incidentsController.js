@@ -24,7 +24,7 @@ const incidentController = {
         progressDate
       );
 
-      res.status(200).json(response);
+      res.status(201).json(response);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -34,6 +34,16 @@ const incidentController = {
     try {
       const { idIncident } = req.params;
       const incident = await incidentService.getIncidentByID(idIncident);
+
+      res.status(200).json(incident);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+  getAllIncidents: async (req, res) => {
+    try {
+      const incident = await incidentService.getAllIncidents();
 
       res.status(200).json(incident);
     } catch (error) {

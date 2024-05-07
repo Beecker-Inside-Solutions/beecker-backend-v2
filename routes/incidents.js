@@ -8,6 +8,9 @@ router.post('/incidents', incidentController.addIncident);
 // Ruta para obtener un incidente por su ID
 router.get('/incidents/:idIncident', incidentController.getIncidentByID);
 
+// Ruta para obtener todos los incidentes
+router.get('/incidents', incidentController.getAllIncidents);
+
 // Ruta para actualizar un incidente existente
 router.put('/incidents/:idIncident', incidentController.updateIncident);
 
