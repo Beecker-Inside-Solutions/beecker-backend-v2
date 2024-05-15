@@ -436,7 +436,6 @@ const botService = {
       const successAndFailRate = await botService.calculateSuccessandFailRate(idBot, timeframe);
       const botExecutions = await botService.getBotExecutions(idBot, timeframe);
       const savedHours = await botService.getSavedHours(idBot, timeframe);
-      const roi = await botService.calculateRoi(idBot, timeframe);
       const averageSuccess = await botService.calculateAverageSuccess(idBot, timeframe);
   
       const workbook = new ExcelJS.Workbook();
@@ -453,10 +452,6 @@ const botService = {
         { header: "Manual Hours", key: "manualHours", width: 20 },
         { header: "Saved Hours", key: "savedHours", width: 15 },
         { header: "Saved Percentage (%)", key: "savedPercentage", width: 20 },
-        { header: "Total Cost", key: "totalCost", width: 15 },
-        { header: "Total Revenue", key: "totalRevenue", width: 15 },
-        { header: "Net Profit", key: "netProfit", width: 15 },
-        { header: "ROI (%)", key: "roi", width: 10 },
         { header: "Average Success Rate (%)", key: "averageSuccessRate", width: 25 },
       ];
   
@@ -464,7 +459,6 @@ const botService = {
         ...data,
         ...botExecutions[index],
         ...savedHours[index],
-        ...roi[index],
         ...averageSuccess[index],
       }));
   
