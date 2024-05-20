@@ -1,4 +1,7 @@
 const connection = require("../helpers/mysql-config");
+const ExcelJS = require("exceljs");
+const fs = require("fs");
+const path = require("path");
 
 const botService = {
   getBots: async () => {
@@ -427,6 +430,50 @@ const botService = {
       throw error;
     }
   },
-};
 
+  exportBotStatistics: async (idBot, timeframe) => {
+    try {
+      const successAndFailRate = await botService.calculateSuccessandFailRate(idBot, timeframe);
+      const botExecutions = await botService.getBotExecutions(idBot, timeframe);
+      const savedHours = await botService.getSavedHours(idBot, timeframe);
+      const averageSuccess = await botService.calculateAverageSuccess(idBot, timeframe);
+  
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Bot Statistics");
+  
+      worksheet.columns = [
+        { header: "Time Group", key: "timeGroup", width: 15 },
+        { header: "Total Executions", key: "totalExecutions", width: 20 },
+        { header: "Success Count", key: "successCount", width: 15 },
+        { header: "Failure Count", key: "failureCount", width: 15 },
+        { header: "Success Rate (%)", key: "successRate", width: 20 },
+        { header: "Failure Rate (%)", key: "failureRate", width: 20 },
+        { header: "Automated Hours", key: "automatedHours", width: 20 },
+        { header: "Manual Hours", key: "manualHours", width: 20 },
+        { header: "Saved Hours", key: "savedHours", width: 15 },
+        { header: "Saved Percentage (%)", key: "savedPercentage", width: 20 },
+        { header: "Average Success Rate (%)", key: "averageSuccessRate", width: 25 },
+      ];
+  
+      const mergedData = successAndFailRate.map((data, index) => ({
+        ...data,
+        ...botExecutions[index],
+        ...savedHours[index],
+        ...averageSuccess[index],
+      }));
+  
+      worksheet.addRows(mergedData);
+  
+      const buffer = await workbook.xlsx.writeBuffer();
+  
+      return {
+        message: "Bot statistics exported successfully",
+        buffer,
+      };
+    } catch (error) {
+      console.error("Failed to export bot statistics:", error);
+      throw error;
+    }
+  },
+};
 module.exports = botService;

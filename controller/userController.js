@@ -41,9 +41,8 @@ const userController = {
   deleteUser: async (req, res) => {
     try {
       const { idUsers } = req.params;
-      const response = await userService.deleteUser(idUsers);
-
-      res.status(200).json(response);
+      await userService.deleteUser(idUsers);
+      res.status(200).json({ message: "User deleted", userId: idUsers });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -61,14 +60,8 @@ const userController = {
 
   registerUser: async (req, res) => {
     try {
-      const {
-        email,
-        password,
-        name,
-        lastName,
-        dateOfBirth,
-        userTypeId,
-      } = req.body;
+      const { email, password, name, lastName, dateOfBirth, userTypeId } =
+        req.body;
       const response = await userService.registerUser(
         email,
         password,
@@ -86,8 +79,8 @@ const userController = {
   updateUserPermissions: async (req, res) => {
     try {
       const { idUsers } = req.params;
-      const { email, name, userTypeId } = req.body; // Assuming email is included in the request body
-      await userService.updateUserPermissions(idUsers, email, name, userTypeId);
+      const { email, userTypeId } = req.body; // Assuming email is included in the request body
+      await userService.updateUserPermissions(idUsers, email, userTypeId);
 
       res.status(200).json({
         message: "User permissions updated",

@@ -265,6 +265,36 @@ const botsController = {
       });
     }
   },
+
+  exportBotStatistics: async (req, res) => {
+    try {
+      const { idBot } = req.params;
+      const { timeframe } = req.body;
+
+      if (!["weekly", "monthly", "yearly"].includes(timeframe)) {
+        return res.status(400).json({
+          message:
+            "Invalid timeframe specified. Please choose 'weekly', 'monthly', or 'yearly'.",
+          status_code: 0,
+        });
+      }
+
+      const result = await botService.exportBotStatistics(idBot, timeframe);
+
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=bot_statistics_${idBot}_${timeframe}.xlsx`
+      );
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      res.send(result.buffer);
+    } catch (error) {
+      console.error("Error exporting bot statistics:", error);
+      res.status(500).json({ message: error.message, status_code: 0 });
+    }
+  },
 };
 
 module.exports = botsController;

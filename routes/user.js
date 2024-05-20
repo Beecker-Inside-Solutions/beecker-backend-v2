@@ -37,4 +37,11 @@ router.put(
   userController.updateUserPermissions
 );
 
+router.delete(
+  "/users/delete/:idUsers",
+  middleware.verifyJWT,
+  middleware.verifyAdminJWT,
+  userController.deleteUser
+);
+
 module.exports = router;
