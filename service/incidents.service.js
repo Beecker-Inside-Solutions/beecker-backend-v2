@@ -37,7 +37,7 @@ const incidentService = {
     updateIncident: async (incidentID = "", incidentName = "", responsible = "", startDate = "", endDate = "", status = "", description = "", progressDate = "") => {
         try {
             const query = "UPDATE Incidents SET incidentName = ?, responsible = ?, startDate = ?, endDate = ?, status = ?, description = ?, progressDate = ? WHERE idIncident = ?";
-            const [rows] = await connection.query(query, [incidentName, responsible, startDate, endDate, status, description, incidentID, progressDate]);
+            const [rows] = await connection.query(query, [incidentName, responsible, startDate, endDate, status, description, progressDate, incidentID]);
 
             return rows;
         } catch (error) {
