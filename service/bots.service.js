@@ -1,7 +1,5 @@
 const connection = require("../helpers/mysql-config");
 const ExcelJS = require("exceljs");
-const fs = require("fs");
-const path = require("path");
 
 const botService = {
   getBots: async () => {
