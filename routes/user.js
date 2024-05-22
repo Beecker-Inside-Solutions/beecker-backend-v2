@@ -10,7 +10,6 @@ router.post("/register", userController.registerUser);
 router.get(
   "/users",
   middleware.verifyJWT,
-  middleware.verifyAdminJWT,
   userController.getUsers
 );
 

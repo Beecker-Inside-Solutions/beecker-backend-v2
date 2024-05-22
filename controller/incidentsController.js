@@ -11,7 +11,7 @@ const incidentController = {
         status,
         description,
         projectID,
-        progressDate
+        progressDate,
       } = req.body;
       const response = await incidentService.addIncident(
         incidentName,
@@ -62,7 +62,7 @@ const incidentController = {
         status,
         description,
         projectID,
-        progressDate
+        progressDate,
       } = req.body;
       const response = await incidentService.updateIncident(
         idIncident,
