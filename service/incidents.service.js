@@ -1,10 +1,10 @@
 const connection = require("../helpers/mysql-config");
 
 const incidentService = {
-    addIncident: async (incidentName = "", responsible = "", startDate = "", endDate = "", status = "", description = "", projectID = 0, progressDate = "") => {
+    addIncident: async (incidentName = "", responsible = "", startDate = "", endDate = "", status = "", description = "", projectID = 0, progresss = "") => {
         try {
-            const query = "INSERT INTO Incidents (incidentName, responsible, startDate, endDate, status, description, isActive, Project_idProject, progressDate) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)";
-            const [rows] = await connection.query(query, [incidentName, responsible, startDate, endDate, status, description, projectID, progressDate]);
+            const query = "INSERT INTO Incidents (incidentName, responsible, startDate, endDate, status, description, isActive, Project_idProject, progresss) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)";
+            const [rows] = await connection.query(query, [incidentName, responsible, startDate, endDate, status, description, projectID, progresss]);
 
             return rows;
         } catch (error) {
@@ -34,10 +34,10 @@ const incidentService = {
         }
     },
 
-    updateIncident: async (incidentID = "", incidentName = "", responsible = "", startDate = "", endDate = "", status = "", description = "", progressDate = "") => {
+    updateIncident: async (incidentID = "", incidentName = "", responsible = "", startDate = "", endDate = "", status = "", description = "", progresss = "") => {
         try {
-            const query = "UPDATE Incidents SET incidentName = ?, responsible = ?, startDate = ?, endDate = ?, status = ?, description = ?, progressDate = ? WHERE idIncident = ?";
-            const [rows] = await connection.query(query, [incidentName, responsible, startDate, endDate, status, description, progressDate, incidentID]);
+            const query = "UPDATE Incidents SET incidentName = ?, responsible = ?, startDate = ?, endDate = ?, status = ?, description = ?, progresss = ? WHERE idIncident = ?";
+            const [rows] = await connection.query(query, [incidentName, responsible, startDate, endDate, status, description, progresss, incidentID]);
 
             return rows;
         } catch (error) {
