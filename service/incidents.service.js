@@ -1,4 +1,5 @@
 const connection = require("../helpers/mysql-config");
+const { executeTransaction } = require("../helpers/mysql-config");
 
 const incidentService = {
   addIncident: async (
@@ -81,6 +82,26 @@ const incidentService = {
 
       return result;
     } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteIncident: async (incidentID) => {
+    try {
+      // Delete files associated with the incident
+      const deleteFilesQuery =
+        "DELETE FROM Files WHERE Incidents_idIncident = ?";
+      await connection.query(deleteFilesQuery, [incidentID]);
+
+      // Delete the incident
+      const deleteIncidentQuery = "DELETE FROM Incidents WHERE idIncident = ?";
+      const [incidentResult] = await connection.query(deleteIncidentQuery, [
+        incidentID,
+      ]);
+
+      return incidentResult;
+    } catch (error) {
+      console.error("Error deleting incident:", error);
       throw error;
     }
   },

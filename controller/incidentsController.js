@@ -130,6 +130,28 @@ const incidentController = {
         .json({ message: "Internal Server Error", error: error.message });
     }
   },
+
+  deleteIncident: async (req, res) => {
+    try {
+      const { idIncident } = req.params;
+
+      if (!idIncident) {
+        return res.status(400).json({ message: "Incident ID is required" });
+      }
+
+      const response = await incidentService.deleteIncident(idIncident);
+
+      if (response.affectedRows === 0) {
+        return res.status(404).json({ message: "Incident not found" });
+      }
+
+      res.status(200).json({ message: "Incident deleted successfully" });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Internal Server Error", error: error.message });
+    }
+  },
 };
 
 module.exports = incidentController;

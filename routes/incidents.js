@@ -14,4 +14,7 @@ router.get('/incidents', incidentController.getAllIncidents);
 // Ruta para actualizar un incidente existente
 router.put('/incidents/:idIncident', incidentController.updateIncident);
 
+// Ruta para eliminar un incidente
+router.delete('/incidents/:idIncident', incidentController.deleteIncident);
+
 module.exports = router;
