@@ -48,6 +48,17 @@ const fileService = {
       throw error;
     }
   },
+
+  getAllFilesByIncidentID: async (incidentID) => {
+    try {
+      const query = "SELECT * FROM Files WHERE Incidents_idIncident = ?";
+      const [rows] = await connection.query(query, [incidentID]);
+
+      return rows;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 module.exports = fileService;
