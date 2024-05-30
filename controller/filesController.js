@@ -14,7 +14,8 @@ const fileController = {
             const { incidentID } = req.body;
             const fileData = req.file.buffer;
             const mimeType = req.file.mimetype;
-            const result = await fileService.addFile(fileData, mimeType, incidentID);
+            const fileName = req.file.originalname;
+            const result = await fileService.addFile(fileData, mimeType, fileName, incidentID);
             res.status(201).json(result);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -27,7 +28,12 @@ const fileController = {
             if (result.length === 0) {
                 res.status(404).json({ message: "File not found" });
             } else {
-                res.status(200).json(result[0]);
+                const file = result[0].file;
+                const fileType = result[0].fileType;
+                const fileName = result[0].fileName;
+                res.setHeader('Content-Type', fileType);
+                res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+                res.send(file);
             }
         } catch (error) {
             res.status(500).json({ error: error.message });

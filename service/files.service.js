@@ -1,10 +1,10 @@
 const connection = require("../helpers/mysql-config");
 
 const fileService = {
-  addFile: async (fileData, mimeType, incidentID) => {
+  addFile: async (fileData, mimeType, fileName, incidentID) => {
     try {
-      const query = "INSERT INTO Files (file, filetype, Incidents_idIncident) VALUES (?, ?, ?)";
-      const [rows] = await connection.query(query, [fileData, mimeType, incidentID]);
+      const query = "INSERT INTO Files (file, fileType, fileName, Incidents_idIncident) VALUES (?, ?, ?, ?)";
+      const [rows] = await connection.query(query, [fileData, mimeType, fileName, incidentID]);
 
       return rows;
     } catch (error) {
@@ -14,9 +14,8 @@ const fileService = {
 
   getFileByID: async (fileID) => {
     try {
-      const query = "SELECT * FROM Files WHERE idFiles = ?";
+      const query = "SELECT file, fileType, fileName FROM Files WHERE idFiles = ?";
       const [rows] = await connection.query(query, [fileID]);
-
       return rows;
     } catch (error) {
       throw error;
