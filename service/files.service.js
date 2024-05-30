@@ -1,14 +1,10 @@
 const connection = require("../helpers/mysql-config");
 
 const fileService = {
-  addFile: async (fileData, incidentID) => {
+  addFile: async (fileData, mimeType, incidentID) => {
     try {
-      // Encode fileData to base64
-      const base64Data = fileData.toString("base64");
-
-      const query =
-        "INSERT INTO Files (file, Incidents_idIncident) VALUES (?, ?)";
-      const [rows] = await connection.query(query, [base64Data, incidentID]);
+      const query = "INSERT INTO Files (file, filetype, Incidents_idIncident) VALUES (?, ?, ?)";
+      const [rows] = await connection.query(query, [fileData, mimeType, incidentID]);
 
       return rows;
     } catch (error) {
