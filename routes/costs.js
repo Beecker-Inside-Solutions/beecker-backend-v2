@@ -11,4 +11,9 @@ router.get(
   costsController.getCostByBotId
 );
 
+router.post(
+  "/costs/calculate/:botId",
+  middleware.verifyJWT,
+  costsController.calculateCosts
+);
 module.exports = router;
