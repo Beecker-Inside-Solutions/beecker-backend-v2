@@ -16,4 +16,10 @@ router.post(
   middleware.verifyJWT,
   costsController.calculateCosts
 );
+
+router.post(
+  "/costs/chart/:botId",
+  middleware.verifyJWT,
+  costsController.costsChart
+);
 module.exports = router;
