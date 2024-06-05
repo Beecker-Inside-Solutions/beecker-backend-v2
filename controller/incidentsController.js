@@ -3,6 +3,8 @@ const incidentService = require("../service/incidents.service");
 const incidentController = {
   addIncident: async (req, res) => {
     try {
+      console.log("Request Body:", req.body); // Log the request body
+
       const {
         incidentName,
         responsible,
@@ -10,17 +12,21 @@ const incidentController = {
         endDate,
         status,
         description,
-        projectID,
+        Project_idProject,
         progress,
       } = req.body;
+
+      // Log the types of Project_idProject and status
+      console.log("Type of Project_idProject:", typeof Project_idProject);
+      console.log("Type of status:", typeof status);
 
       // Input validation
       if (
         !incidentName ||
         !responsible ||
         !startDate ||
-        !status.toString() ||
-        !projectID.toString()
+        !status.toString() || // Ensure status is converted to string
+        !Project_idProject.toString() // Ensure Project_idProject is converted to string
       ) {
         return res.status(400).json({ message: "Missing required fields" });
       }
@@ -32,7 +38,7 @@ const incidentController = {
         endDate,
         status,
         description,
-        projectID,
+        Project_idProject,
         progress
       );
 
@@ -46,6 +52,7 @@ const incidentController = {
         .json({ message: "Internal Server Error", error: error.message });
     }
   },
+
 
   getIncidentByID: async (req, res) => {
     try {
