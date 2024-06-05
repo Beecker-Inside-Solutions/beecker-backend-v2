@@ -3,8 +3,6 @@ const incidentService = require("../service/incidents.service");
 const incidentController = {
   addIncident: async (req, res) => {
     try {
-      console.log("Request Body:", req.body); // Log the request body
-
       const {
         incidentName,
         responsible,
@@ -15,10 +13,6 @@ const incidentController = {
         Project_idProject,
         progress,
       } = req.body;
-
-      // Log the types of Project_idProject and status
-      console.log("Type of Project_idProject:", typeof Project_idProject);
-      console.log("Type of status:", typeof status);
 
       // Input validation
       if (
@@ -52,7 +46,6 @@ const incidentController = {
         .json({ message: "Internal Server Error", error: error.message });
     }
   },
-
 
   getIncidentByID: async (req, res) => {
     try {
