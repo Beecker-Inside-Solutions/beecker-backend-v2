@@ -79,7 +79,6 @@ const incidentController = {
         .json({ message: "Internal Server Error", error: error.message });
     }
   },
-
   updateIncident: async (req, res) => {
     try {
       const { idIncident } = req.params;
@@ -90,7 +89,7 @@ const incidentController = {
         endDate,
         status,
         description,
-        projectID,
+        Project_idProject,
         progress,
       } = req.body;
 
@@ -99,8 +98,8 @@ const incidentController = {
         !incidentName ||
         !responsible ||
         !startDate ||
-        !status.toString() ||
-        !projectID.toString()
+        status === undefined || // Check if status is undefined
+        Project_idProject === undefined // Check if Project_idProject is undefined
       ) {
         return res.status(400).json({ message: "Missing required fields" });
       }
@@ -113,7 +112,7 @@ const incidentController = {
         endDate,
         status,
         description,
-        projectID,
+        Project_idProject,
         progress
       );
 
