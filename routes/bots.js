@@ -45,12 +45,6 @@ router.get(
   botsController.getBotsByUser
 );
 
-router.get(
-  "/bots/project/:idProject",
-  middleware.verifyJWT,
-  botsController.getBotsByProject
-);
-
 router.post(
   "/bots/inactivate/:idBots",
   middleware.verifyJWT,

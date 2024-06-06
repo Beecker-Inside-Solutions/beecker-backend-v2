@@ -7,11 +7,7 @@ router.post("/login", userController.login);
 
 router.post("/register", userController.registerUser);
 
-router.get(
-  "/users",
-  middleware.verifyJWT,
-  userController.getUsers
-);
+router.get("/users", middleware.verifyJWT, userController.getUsers);
 
 router.get("/users/:idUsers", middleware.verifyJWT, userController.getUserById);
 
@@ -34,13 +30,6 @@ router.put(
   middleware.verifyJWT,
   middleware.verifyAdminJWT,
   userController.updateUserPermissions
-);
-
-router.delete(
-  "/users/delete/:idUsers",
-  middleware.verifyJWT,
-  middleware.verifyAdminJWT,
-  userController.deleteUser
 );
 
 module.exports = router;
