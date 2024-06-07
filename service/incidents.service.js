@@ -67,8 +67,6 @@ const incidentService = {
     progress = ""
   ) => {
     try {
-      console.log("Updating incident with ID:", incidentID);
-      console.log("Progress value received:", progress);
       const query =
         "UPDATE Incidents SET incidentName = ?, responsible = ?, startDate = ?, endDate = ?, status = ?, description = ?, progress = ? WHERE idIncident = ?";
       const [result] = await connection.query(query, [

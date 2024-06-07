@@ -91,7 +91,6 @@ const incidentController = {
         description,
         progress,
       } = req.body;
-      console.log("Request body for update:", req.body);
       const result = await incidentService.updateIncident(
         idIncident,
         incidentName,
