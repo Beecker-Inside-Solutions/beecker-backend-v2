@@ -89,22 +89,10 @@ const incidentController = {
         endDate,
         status,
         description,
-        Project_idProject,
         progress,
       } = req.body;
-
-      if (
-        !idIncident ||
-        !incidentName ||
-        !responsible ||
-        !startDate ||
-        status === undefined || // Check if status is undefined
-        Project_idProject === undefined // Check if Project_idProject is undefined
-      ) {
-        return res.status(400).json({ message: "Missing required fields" });
-      }
-
-      const response = await incidentService.updateIncident(
+      console.log("Request body for update:", req.body);
+      const result = await incidentService.updateIncident(
         idIncident,
         incidentName,
         responsible,
@@ -112,24 +100,13 @@ const incidentController = {
         endDate,
         status,
         description,
-        Project_idProject,
         progress
       );
-
-      if (response.affectedRows === 0) {
-        return res
-          .status(404)
-          .json({ message: "Incident not found or no change in data" });
-      }
-
-      res.status(200).json({ message: "Incident updated successfully" });
+      res.status(200).json(result);
     } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Internal Server Error", error: error.message });
+      res.status(500).json({ error: error.message });
     }
   },
-
   deleteIncident: async (req, res) => {
     try {
       const { idIncident } = req.params;

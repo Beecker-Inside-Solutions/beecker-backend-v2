@@ -67,6 +67,8 @@ const incidentService = {
     progress = ""
   ) => {
     try {
+      console.log("Updating incident with ID:", incidentID);
+      console.log("Progress value received:", progress);
       const query =
         "UPDATE Incidents SET incidentName = ?, responsible = ?, startDate = ?, endDate = ?, status = ?, description = ?, progress = ? WHERE idIncident = ?";
       const [result] = await connection.query(query, [
@@ -85,7 +87,6 @@ const incidentService = {
       throw error;
     }
   },
-
   deleteIncident: async (incidentID) => {
     try {
       // Delete files associated with the incident
