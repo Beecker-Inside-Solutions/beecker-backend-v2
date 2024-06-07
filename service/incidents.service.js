@@ -4,7 +4,7 @@ const { executeTransaction } = require("../helpers/mysql-config");
 const incidentService = {
   addIncident: async (
     incidentName = "",
-    responsible = "",
+    responsibleName = "",
     startDate = "",
     endDate = "",
     status = "",
@@ -13,11 +13,22 @@ const incidentService = {
     progress = ""
   ) => {
     try {
+      // Fetch the responsible user's ID based on the provided name and last name
+      const [responsibleFirstName, responsibleLastName] =
+        responsibleName.split(" ");
+      const userQuery =
+        "SELECT idUsers FROM Users WHERE name = ? AND lastName = ?";
+      const [userRows] = await connection.query(userQuery, [
+        responsibleFirstName,
+        responsibleLastName,
+      ]);
+      const responsibleUserID = userRows[0].idUsers;
+
       const query =
         "INSERT INTO Incidents (incidentName, responsible, startDate, endDate, status, description, isActive, Project_idProject, progress) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)";
       const [result] = await connection.query(query, [
         incidentName,
-        responsible,
+        responsibleName,
         startDate,
         endDate,
         status,
@@ -26,8 +37,13 @@ const incidentService = {
         progress,
       ]);
 
+      console.log("Incident added successfully");
+      console.log("Incident ID:", result.insertId);
+      console.log("Responsible User ID:", responsibleUserID);
+    
       return {
         incidentID: result.insertId,
+        responsibleUserID: responsibleUserID,
       };
     } catch (error) {
       throw error;

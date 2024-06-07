@@ -39,6 +39,7 @@ const incidentController = {
       res.status(201).json({
         message: "Incident added successfully",
         incidentID: response.incidentID,
+        responsibleUserID: response.responsibleUserID,
       });
     } catch (error) {
       res
