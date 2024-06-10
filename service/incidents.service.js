@@ -40,7 +40,7 @@ const incidentService = {
       console.log("Incident added successfully");
       console.log("Incident ID:", result.insertId);
       console.log("Responsible User ID:", responsibleUserID);
-    
+
       return {
         incidentID: result.insertId,
         responsibleUserID: responsibleUserID,
@@ -71,7 +71,6 @@ const incidentService = {
       throw error;
     }
   },
-
   updateIncident: async (
     incidentID = "",
     incidentName = "",
@@ -83,6 +82,22 @@ const incidentService = {
     progress = ""
   ) => {
     try {
+      // Fetch the responsible user's ID based on the provided name and last name
+      const [responsibleFirstName, responsibleLastName] =
+        responsible.split(" ");
+      const userQuery =
+        "SELECT idUsers FROM Users WHERE name = ? AND lastName = ?";
+      const [userRows] = await connection.query(userQuery, [
+        responsibleFirstName,
+        responsibleLastName,
+      ]);
+
+      if (userRows.length === 0) {
+        throw new Error("Responsible user not found");
+      }
+
+      const responsibleUserID = userRows[0].idUsers;
+
       const query =
         "UPDATE Incidents SET incidentName = ?, responsible = ?, startDate = ?, endDate = ?, status = ?, description = ?, progress = ? WHERE idIncident = ?";
       const [result] = await connection.query(query, [
@@ -96,11 +111,16 @@ const incidentService = {
         incidentID,
       ]);
 
-      return result;
+      return {
+        affectedRows: result.affectedRows,
+        responsibleUserID: responsibleUserID,
+        incidentName: incidentName,
+      };
     } catch (error) {
       throw error;
     }
   },
+
   deleteIncident: async (incidentID) => {
     try {
       // Delete files associated with the incident
