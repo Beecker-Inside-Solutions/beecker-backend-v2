@@ -59,34 +59,37 @@ const costService = {
         case "weekly":
           sql = `
             SELECT 
-                DATE_FORMAT(DATE(createdAt), '%X-%V') AS weekOfYear,
+                DATE_FORMAT(createdAt, '%d-%b %H:%i') AS weekOfYear,
                 AVG(productionCost) AS avgCost, 
                 AVG(customerPayment) AS avgRevenue
             FROM Costs
             WHERE Bots_idBots = ? AND createdAt >= DATE_SUB(NOW(), INTERVAL 1 WEEK)
-            GROUP BY weekOfYear
+            GROUP BY DATE_FORMAT(createdAt, '%Y-%m-%d')
+            ORDER BY weekOfYear
           `;
           break;
         case "monthly":
           sql = `
             SELECT 
-                DATE_FORMAT(DATE(createdAt), '%Y-%m') AS month,
+                DATE_FORMAT(DATE(createdAt), '%d-%b') AS month,
                 AVG(productionCost) AS avgCost, 
                 AVG(customerPayment) AS avgRevenue
             FROM Costs
             WHERE Bots_idBots = ? AND createdAt >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
-            GROUP BY month
+            GROUP BY DATE_FORMAT(createdAt, '%Y-%m-%d')
+            ORDER BY month
           `;
           break;
         case "yearly":
           sql = `
             SELECT 
-                YEAR(DATE(createdAt)) AS year,
+                DATE_FORMAT(createdAt, '%Y') AS year,
                 AVG(productionCost) AS avgCost, 
                 AVG(customerPayment) AS avgRevenue
             FROM Costs
-            WHERE Bots_idBots = ? AND YEAR(DATE(createdAt)) = YEAR(CURDATE())
-            GROUP BY year
+           WHERE Bots_idBots = ? AND createdAt >= DATE_SUB(NOW(), INTERVAL 5 YEAR)
+           GROUP BY DATE_FORMAT(createdAt, '%Y') 
+           ORDER BY createdAt
           `;
           break;
         default:
