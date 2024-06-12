@@ -22,6 +22,27 @@ const forgotController = {
       res.status(500).json({ message: error.message });
     }
   },
+
+  resetPassword: async (req, res) => {
+    try {
+      const { password, token } = req.body;
+      console.log(`Reset password endpoint hit with token: ${token}`);
+
+      if (!password || !token) {
+        console.error("Missing password or token in request body");
+        return res
+          .status(400)
+          .json({ message: "Password and token are required" });
+      }
+
+      // Call the resetPassword method of the forgotService
+      await forgotService.resetPassword(password, token);
+      res.status(200).json({ message: "Password updated" });
+    } catch (error) {
+      console.error("Error in resetPassword controller:", error);
+      res.status(500).json({ message: error.message });
+    }
+  },
 };
 
 module.exports = forgotController;
