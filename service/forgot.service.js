@@ -36,18 +36,91 @@ const forgotService = {
           from: `Beecker Recovery <${process.env.EMAIL}>`,
           to: email,
           subject: "Reset Password",
-          html: `<h1>Reset Password</h1>
-                <p>Click the link below to reset your password</p>
-                <a href="http://localhost:3000/resetPassword/${token}/idUsers/${user.idUsers}">Reset Password</a>`,
+          html: `
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <title>Actualización de Contraseña</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                font-size: 14px;
+                color: #333333;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+              }
+              a {
+                color: #0072c6;
+                text-decoration: none;
+              }
+              a:hover {
+                color: #003c7a;
+                text-decoration: underline;
+              }
+
+              img {
+                width: 200px;
+              }
+            </style>
+          </head>
+          <body>
+            <img src="https://raw.githubusercontent.com/Beecker-Inside-Solutions/beecker-Front/main/app/images/logos/logo.png" alt="beecker-logo" border="0">
+            <p>Dear user,</p>
+            <p>We have recieved the request to change your password, click in reset password to properly reset it:</p>
+            <a href="http://localhost:3000/resetPassword/${token}/idUsers/${user.idUsers}">Reset Password</a>
+            <p>This link will only last 15 minutes.</p>
+            <p>Thank you,</p>
+            <p>Beecker</p>
+          </body>
+        </html>
+          `,
         };
 
         const infoSpanish = {
           from: `Beecker Recovery <${process.env.EMAIL}>`,
           to: email,
           subject: "Restablecer Contraseña",
-          html: `<h1>Restablecer Contraseña</h1>
-                <p>Haga clic en el enlace de abajo para restablecer su contraseña</p>
-                <a href="http://localhost:3000/resetPassword/${token}/idUsers/${user.idUsers}">Restablecer Contraseña</a>`,
+          html: `
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <title>Actualización de Contraseña</title>
+            <style>
+              body {
+                font-family: Arial, sans-serif;
+                font-size: 14px;
+                color: #333333;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+              }
+              a {
+                color: #0072c6;
+                text-decoration: none;
+              }
+              a:hover {
+                color: #003c7a;
+                text-decoration: underline;
+              }
+
+              img {
+                width: 200px;
+              }
+            </style>
+          </head>
+          <body>
+            <img src="https://raw.githubusercontent.com/Beecker-Inside-Solutions/beecker-Front/main/app/images/logos/logo.png" alt="beecker-logo" border="0">
+            <p>Estimado usuario,</p>
+            <p>Hemos recibido la petición de restablecer su contraseña, de click en recuperar contraseña:</p>
+            <a href="http://localhost:3000/resetPassword/${token}/idUsers/${user.idUsers}">Recuperar Contraseña</a>
+            <p>Este link solo estará disponible 15 minutos.</p>
+            <p>Gracias,</p>
+            <p>Beecker</p>
+          </body>
+        </html>`,
         };
 
         let mailOptions;
