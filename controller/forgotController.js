@@ -25,18 +25,21 @@ const forgotController = {
 
   resetPassword: async (req, res) => {
     try {
-      const { password, token } = req.body;
+      const { password, token, userId } = req.body;
       console.log(`Reset password endpoint hit with token: ${token}`);
 
-      if (!password || !token) {
-        console.error("Missing password or token in request body");
+      if (!password || !token || !userId) {
+        console.error("Missing password, token, or userId in request body");
         return res
           .status(400)
-          .json({ message: "Password and token are required" });
+          .json({ message: "Password, token, and userId are required" });
       }
 
-      // Call the resetPassword method of the forgotService
-      await forgotService.resetPassword(password, token);
+      // Parse userId as integer
+      const idUser = parseInt(userId, 10);
+      console.log(`Parsed userId: ${idUser}`);
+
+      await forgotService.resetPassword(password, token, idUser);
       res.status(200).json({ message: "Password updated" });
     } catch (error) {
       console.error("Error in resetPassword controller:", error);

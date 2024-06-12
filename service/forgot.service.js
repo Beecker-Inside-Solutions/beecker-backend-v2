@@ -10,7 +10,7 @@ const forgotService = {
       );
 
       const [rows] = await connection.query(
-        "SELECT idUsers, email, password FROM Users WHERE email = ?",
+        "SELECT idUsers, email FROM Users WHERE email = ?",
         [email]
       );
 
@@ -25,120 +25,110 @@ const forgotService = {
           service: "gmail",
           host: "smtp.gmail.com",
           port: 587,
-          secure: false, // true for 465, false for other ports
+          secure: false,
           auth: {
             user: process.env.EMAIL,
             pass: process.env.EMAIL_PASSWORD,
           },
         });
 
-        const infoEnglish = {
-          from: `Beecker Recovery <${process.env.EMAIL}>`,
-          to: email,
-          subject: "Reset Password",
-          html: `
-          <html>
-          <head>
-            <meta charset="UTF-8">
-            <title>Actualización de Contraseña</title>
-            <style>
-              body {
-                font-family: Arial, sans-serif;
-                font-size: 14px;
-                color: #333333;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-              }
-              a {
-                color: #0072c6;
-                text-decoration: none;
-              }
-              a:hover {
-                color: #003c7a;
-                text-decoration: underline;
-              }
-
-              img {
-                width: 200px;
-              }
-            </style>
-          </head>
-          <body>
-            <img src="https://raw.githubusercontent.com/Beecker-Inside-Solutions/beecker-Front/main/app/images/logos/logo.png" alt="beecker-logo" border="0">
-            <p>Dear user,</p>
-            <p>We have recieved the request to change your password, click in reset password to properly reset it:</p>
-            <a href="http://localhost:3000/resetPassword/${token}/idUsers/${user.idUsers}">Reset Password</a>
-            <p>This link will only last 15 minutes.</p>
-            <p>Thank you,</p>
-            <p>Beecker</p>
-          </body>
-        </html>
-          `,
+        const mailContent = {
+          en: {
+            subject: "Reset Password",
+            html: `
+            <html>
+              <head>
+                <meta charset="UTF-8">
+                <title>Reset Password</title>
+                <style>
+                  body {
+                    font-family: Arial, sans-serif;
+                    font-size: 14px;
+                    color: #333333;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                  }
+                  a {
+                    color: #0072c6;
+                    text-decoration: none;
+                  }
+                  a:hover {
+                    color: #003c7a;
+                    text-decoration: underline;
+                  }
+                  img {
+                    width: 200px;
+                  }
+                </style>
+              </head>
+              <body>
+                <img src="https://raw.githubusercontent.com/Beecker-Inside-Solutions/beecker-Front/main/app/images/logos/logo.png" alt="beecker-logo" border="0">
+                <p>Dear user,</p>
+                <p>We have received a request to reset your password. Click the link below to reset it:</p>
+                <a href="http://localhost:3000/resetPassword/${token}/idUsers/${user.idUsers}">Reset Password</a>
+                <p>This link will expire in 15 minutes.</p>
+                <p>Thank you,</p>
+                <p>Beecker</p>
+              </body>
+            </html>`,
+          },
+          es: {
+            subject: "Restablecer Contraseña",
+            html: `
+            <html>
+              <head>
+                <meta charset="UTF-8">
+                <title>Restablecer Contraseña</title>
+                <style>
+                  body {
+                    font-family: Arial, sans-serif;
+                    font-size: 14px;
+                    color: #333333;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                  }
+                  a {
+                    color: #0072c6;
+                    text-decoration: none;
+                  }
+                  a:hover {
+                    color: #003c7a;
+                    text-decoration: underline;
+                  }
+                  img {
+                    width: 200px;
+                  }
+                </style>
+              </head>
+              <body>
+                <img src="https://raw.githubusercontent.com/Beecker-Inside-Solutions/beecker-Front/main/app/images/logos/logo.png" alt="beecker-logo" border="0">
+                <p>Estimado usuario,</p>
+                <p>Hemos recibido una solicitud para restablecer su contraseña. Haga clic en el enlace a continuación para restablecerla:</p>
+                <a href="http://localhost:3000/resetPassword/${token}/idUsers/${user.idUsers}">Restablecer Contraseña</a>
+                <p>Este enlace expirará en 15 minutos.</p>
+                <p>Gracias,</p>
+                <p>Beecker</p>
+              </body>
+            </html>`,
+          },
         };
 
-        const infoSpanish = {
+        const mailOptions = {
           from: `Beecker Recovery <${process.env.EMAIL}>`,
           to: email,
-          subject: "Restablecer Contraseña",
-          html: `
-          <html>
-          <head>
-            <meta charset="UTF-8">
-            <title>Actualización de Contraseña</title>
-            <style>
-              body {
-                font-family: Arial, sans-serif;
-                font-size: 14px;
-                color: #333333;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-              }
-              a {
-                color: #0072c6;
-                text-decoration: none;
-              }
-              a:hover {
-                color: #003c7a;
-                text-decoration: underline;
-              }
-
-              img {
-                width: 200px;
-              }
-            </style>
-          </head>
-          <body>
-            <img src="https://raw.githubusercontent.com/Beecker-Inside-Solutions/beecker-Front/main/app/images/logos/logo.png" alt="beecker-logo" border="0">
-            <p>Estimado usuario,</p>
-            <p>Hemos recibido la petición de restablecer su contraseña, de click en recuperar contraseña:</p>
-            <a href="http://localhost:3000/resetPassword/${token}/idUsers/${user.idUsers}">Recuperar Contraseña</a>
-            <p>Este link solo estará disponible 15 minutos.</p>
-            <p>Gracias,</p>
-            <p>Beecker</p>
-          </body>
-        </html>`,
+          subject:
+            mailContent[languageType]?.subject || mailContent["en"].subject,
+          html: mailContent[languageType]?.html || mailContent["en"].html,
         };
-
-        let mailOptions;
-        switch (languageType) {
-          case "es":
-            mailOptions = infoSpanish;
-            break;
-          case "en":
-            mailOptions = infoEnglish;
-            break;
-          default:
-            mailOptions = infoEnglish;
-            break;
-        }
 
         transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
             console.error("Error sending email:", error);
+            throw new Error("Failed to send email");
           } else {
             console.log("Email sent:", info.response);
           }
@@ -153,28 +143,28 @@ const forgotService = {
     }
   },
 
-  resetPassword: async (password, token, userId) => {
+  resetPassword: async (password, token, idUser) => {
     try {
       console.log(
-        `Reset password service called with token: ${token} and userId: ${userId}`
+        `Reset password service called with token: ${token} and idUser: ${idUser}`
       );
 
-      if (!password || !token || !userId) {
-        console.error("Missing password, token, or userId");
-        throw new Error("Password, token, and userId are required");
+      if (!password || !token || !idUser) {
+        console.error("Missing password, token, or idUser");
+        throw new Error("Password, token, and idUser are required");
       }
 
-      const decoded = jwtMiddleware.verifyToken(token);
+      const decoded = jwtMiddleware.verifyJWT(token);
       console.log(`Decoded token: ${JSON.stringify(decoded)}`);
 
-      if (decoded.idUsers !== parseInt(userId, 10)) {
+      if (decoded.userID !== parseInt(idUser, 10)) {
         console.error("Invalid token: User ID does not match");
         throw new Error("Invalid token");
       }
 
       await connection.query(
-        "UPDATE Users SET password = SHA2(?, 224) WHERE idUsers = ?",
-        [password, userId]
+        "UPDATE Users SET password = SHA2(?,224) WHERE idUsers = ?",
+        [hashedPassword, idUser]
       );
 
       console.log("Password updated successfully");
