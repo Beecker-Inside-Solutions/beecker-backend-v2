@@ -68,7 +68,7 @@ const forgotService = {
                 <img src="https://raw.githubusercontent.com/Beecker-Inside-Solutions/beecker-Front/main/app/images/logos/logo.png" alt="beecker-logo" border="0">
                 <p>Dear user,</p>
                 <p>We have received a request to reset your password. Click the link below to reset it:</p>
-                <a href="http://localhost:3000/resetPassword/${token}/idUsers/${user.idUsers}">Reset Password</a>
+                <a href="https://beecker-pipo.vercel.app/resetPassword/${token}/idUsers/${user.idUsers}">Reset Password</a>
                 <p>This link will expire in 15 minutes.</p>
                 <p>Thank you,</p>
                 <p>Beecker</p>
@@ -109,7 +109,7 @@ const forgotService = {
                 <img src="https://raw.githubusercontent.com/Beecker-Inside-Solutions/beecker-Front/main/app/images/logos/logo.png" alt="beecker-logo" border="0">
                 <p>Estimado usuario,</p>
                 <p>Hemos recibido una solicitud para restablecer su contraseña. Haga clic en el enlace a continuación para restablecerla:</p>
-                <a href="http://localhost:3000/resetPassword/${token}/idUsers/${user.idUsers}">Restablecer Contraseña</a>
+                <a href="https://beecker-pipo.vercel.app/resetPassword/${token}/idUsers/${user.idUsers}">Restablecer Contraseña</a>
                 <p>Este enlace expirará en 15 minutos.</p>
                 <p>Gracias,</p>
                 <p>Beecker</p>
