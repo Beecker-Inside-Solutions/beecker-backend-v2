@@ -2,6 +2,7 @@ const connection = require("../helpers/mysql-config");
 const nodemailer = require("nodemailer");
 const jwtMiddleware = require("../middleware/jwt-middleware");
 
+
 const forgotService = {
   forgotPassword: async (email, languageType) => {
     try {
@@ -145,26 +146,24 @@ const forgotService = {
 
   resetPassword: async (password, token, idUser) => {
     try {
-      console.log(
-        `Reset password service called with token: ${token} and idUser: ${idUser}`
-      );
+      console.log(`Reset password service called with token: ${token} and idUser: ${idUser}`);
 
       if (!password || !token || !idUser) {
         console.error("Missing password, token, or idUser");
         throw new Error("Password, token, and idUser are required");
       }
 
-      const decoded = jwtMiddleware.verifyJWT(token);
+      const decoded = await jwtMiddleware.singleVerify(token);
       console.log(`Decoded token: ${JSON.stringify(decoded)}`);
 
-      if (decoded.userID !== parseInt(idUser, 10)) {
+      if (decoded.userID !== idUser) {
         console.error("Invalid token: User ID does not match");
         throw new Error("Invalid token");
       }
 
       await connection.query(
         "UPDATE Users SET password = SHA2(?,224) WHERE idUsers = ?",
-        [hashedPassword, idUser]
+        [password, idUser]
       );
 
       console.log("Password updated successfully");

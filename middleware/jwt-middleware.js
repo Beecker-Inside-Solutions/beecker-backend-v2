@@ -41,9 +41,23 @@ const verifyAdminJWT = (req, res, next) => {
   next();
 };
 
+const singleVerify = (token) => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        console.error("Token verification error:", err);
+        reject(new Error("Invalid token"));
+      } else {
+        resolve(decoded);
+      }
+    });
+  });
+};
+
 module.exports = {
   generateAdminToken,
   verifyJWT,
   verifyAdminJWT,
   generateToken,
+  singleVerify,
 };

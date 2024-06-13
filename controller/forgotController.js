@@ -24,6 +24,7 @@ const forgotController = {
   },
 
   resetPassword: async (req, res) => {
+    console.log("Request body:", req.body); // Add this line to log the request body
     try {
       const { password, token, userId } = req.body;
       console.log(`Reset password endpoint hit with token: ${token}`);
